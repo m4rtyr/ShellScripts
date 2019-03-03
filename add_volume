@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+###########################
+#                         #
+# Author: silentcat       #
+# Date: 2018-12-21        #
+# Description: Adds a     #
+# volume to the specified #
+# droplet.                #
+#                         #
+###########################
+
+if [[ $1 == "" || $2 == "" ]]
+then
+  echo "Please specify a volume: ./add_volume [droplet_name] [volume_name]"
+  exit
+fi
+
+id=$(doctl compute droplet list | grep "$1" | awk '{ print $1 }')
+token=$(cat /Users/silentcat/token)
+curl -X POST -H "Authorization: Bearer $token" \
+-H "Content-Type: application/json" \
+-d "{\"type\": \"attach\", \"droplet_id\": \"${id}\", \"volume_name\": \"${2}\", \"region\": \"nyc1\" }" \
+https://api.digitalocean.com/v2/volumes/actions

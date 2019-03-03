@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+# @Author: S. Sharma <silentcat>
+# @Date:   2019-01-16T10:55:50-06:00
+# @Email:  silentcat@protonmail.com
+# @Last modified by:   silentcat
+# @Last modified time: 2019-03-01T16:38:03-06:00
+
+
+doctl compute droplet create --image ubuntu-18-04-x64 --region nyc1 --size 4gb \
+--user-data-file /Users/silentcat/code/digital_ocean/scripts/vpn_pass.yaml \
+"vpn-pass" >/dev/null
+ip="4096"
+while [[ $ip == "4096" ]]
+do
+ip=$(doctl compute droplet list | grep "vpn-pass" | awk '{ print $3 }')
+done
+
+GREEN="\e[1;32m"
+NONE="\e[0m"
+DIR="/Users/silentcat/.ssh/vpn-pass"
+
+printf "${GREEN}Created droplet...${NONE}\n"
+trap "rm -rf pass index.html >/dev/null; doctl compute droplet delete vpn-pass; exit" INT
+ssh -p 443 -i $DIR silentcat@${ip} "wget https://www.vpnbook.com/"
+printf "${GREEN}GET vpnbook.com complete...${NONE}\n"
+rsync -e "ssh -p 443 -i $DIR" silentcat@${ip}:/home/silentcat/index.html .
+printf "${GREEN}Transferred index file to here...${NONE}\n"
+pass=$(python3 /Users/silentcat/code/digital_ocean/scripts/get_passwd_url.py)
+echo $pass
+printf "${GREEN}Acquired password${NONE}\n"
+ssh -p 443 -i $DIR silentcat@${ip} "wget \"https://www.vpnbook.com/${pass}\""
+rsync -e "ssh -p 443 -i $DIR" silentcat@${ip}:"\"/home/silentcat/${pass}\"" .
+printf "${GREEN}Dumped contents into pass${NONE}\n"
+open "$pass"
+doctl compute droplet delete -f vpn-pass
+rm -rf "$pass" index.html >/dev/null

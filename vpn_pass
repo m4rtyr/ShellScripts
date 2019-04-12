@@ -4,7 +4,7 @@
 # @Date:   2019-01-16T10:55:50-06:00
 # @Email:  silentcat@protonmail.com
 # @Last modified by:   silentcat
-# @Last modified time: 2019-03-01T16:38:03-06:00
+# @Last modified time: 2019-04-12T15:37:29-05:00
 
 
 doctl compute droplet create --image ubuntu-18-04-x64 --region nyc1 --size 4gb \
@@ -13,7 +13,7 @@ doctl compute droplet create --image ubuntu-18-04-x64 --region nyc1 --size 4gb \
 ip="4096"
 while [[ $ip == "4096" ]]
 do
-ip=$(doctl compute droplet list | grep "vpn-pass" | awk '{ print $3 }')
+  ip=$(doctl compute droplet list | grep "vpn-pass" | awk '{ print $3 }')
 done
 
 GREEN="\e[1;32m"

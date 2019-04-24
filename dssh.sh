@@ -4,7 +4,7 @@
 # @Date:   2019-04-23T07:17:10-05:00
 # @Email:  silentcat@protonmail.com
 # @Last modified by:   silentcat
-# @Last modified time: 2019-04-23T21:56:04-05:00
+# @Last modified time: 2019-04-23T22:04:45-05:00
 
 
 if [[ $1 == "" ]]
@@ -15,8 +15,10 @@ fi
 
 port=22
 username=$USER
+identity=""
 get_port=0
 get_uname=0
+get_identity=0
 
 
 for i in "$@"
@@ -29,12 +31,19 @@ do
 	then
 		username=$i
 		get_uname=0
+	elif [[ $get_identity -eq 1 ]]
+	then
+		identity=$i
+		get_identity=0
 	elif [[ $i == "-p" ]]
 	then
 		get_port=1
 	elif [[ $i == "-u" ]]
 	then
 		get_uname=1
+	elif [[ $i == "-i" ]]
+	then
+		get_identity=1
 	fi
 done
 
@@ -46,4 +55,9 @@ then
 	exit
 fi
 
-ssh ${username}@${name} -p $port
+if [[ $identity != "" ]]
+then
+	ssh ${username}@${name} -p $port -i $identity
+else
+	ssh ${username}@${name} -p $port
+fi

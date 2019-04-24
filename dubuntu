@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+
+##################
+#
+# Author: silentcat
+# Date: 2018-04-08
+# Description: Creates
+# a droplet and lists
+# its IP address.
+#
+##################
+
+if [[ $1 == "" ]]
+then
+  echo "Usage: ./dubuntu [name]"
+  exit
+fi
+
+doctl compute droplet create --image ubuntu-18-04-x64 --region nyc1 --size 4gb \
+--user-data-file ~/code/digital_ocean/scripts/ubuntu_startup_script.yaml "$1" >/dev/null
+doctl compute droplet list

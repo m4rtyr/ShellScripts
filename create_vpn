@@ -1,0 +1,25 @@
+#!/usr/bin/env
+
+# @Author: S. Sharma <silentcat>
+# @Date:   2019-08-30T21:30:04-05:00
+# @Email:  silentcat@protonmail.com
+# @Last modified by:   silentcat
+# @Last modified time: 2019-08-30T22:26:08-05:00
+
+port=443
+if [[ $1 != "" ]]
+then
+  port=$1
+fi
+
+doctl compute droplet create --image ubuntu-18-04-x64 --region nyc1 --size 4gb \
+--user-data-file ~/code/digital_ocean/scripts/vpn_startup_script.yaml "vpn-server" >/dev/null
+vpn_ip=$(doctl compute droplet list | grep "vpn-server" | awk '{ print $3 }')
+while [[ $vpn_ip == "4096" ]]
+do
+  vpn_ip=$(doctl compute droplet list | grep "vpn-server" | awk '{ print $3 }')
+done
+scp -o ConnectionAttempts=1000 -P $port "silentcat@${vpn_ip}:/dsvpn/vpn.key" .
+sudo dsvpn client vpn.key $vpn_ip 8080
+rm vpn.key
+doctl compute droplet delete "vpn-server"

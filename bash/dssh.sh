@@ -57,7 +57,7 @@ fi
 
 if [[ $identity != "" ]]
 then
-	ssh ${username}@${name} -p $port -i $identity
+	ssh -o ConnectionAttempts=100 ${username}@${name} -p $port -i $identity
 else
-	ssh ${username}@${name} -p $port
+	ssh -o ConnectionAttempts=100 ${username}@${name} -p $port
 fi

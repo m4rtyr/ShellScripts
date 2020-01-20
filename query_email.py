@@ -2,7 +2,7 @@
 # @Date:   2020-01-20T10:25:20-06:00
 # @Email:  silentcat@protonmail.com
 # @Last modified by:   m4rtyr
-# @Last modified time: 2020-01-20T10:39:41-06:00
+# @Last modified time: 2020-01-20T11:19:29-06:00
 
 
 
@@ -27,7 +27,7 @@ def main():
     print('         MAIL\n-----------------------\n')
     for i in range(0, 5):
             msg = service.users().messages().get(userId='me', id=messages[i]['id']).execute()
-            print('%s %-100s %s' % (fg(random.randint(2, 231)), msg['snippet'] + '\n', attr(0)))
+            print('%s %-100s %s' % (fg(random.randint(9, 15)), msg['snippet'] + '\n', attr(0)))
 
 if __name__ == '__main__':
     main()

@@ -2,7 +2,7 @@
 # @Date:   2020-01-20T10:25:20-06:00
 # @Email:  silentcat@protonmail.com
 # @Last modified by:   m4rtyr
-# @Last modified time: 2020-01-20T11:19:29-06:00
+# @Last modified time: 2020-02-01T21:11:13-06:00
 
 
 
@@ -11,15 +11,16 @@ from httplib2 import Http
 from oauth2client import file, client, tools
 from colored import fg, attr
 import random
+from os.path import expanduser
 
 SCOPES = 'https://www.googleapis.com/auth/gmail.readonly'
 
 def main():
 
-    store = file.Storage('.token.json')
+    store = file.Storage(expanduser('~/.token.json'))
     creds = store.get()
     if not creds or creds.invalid:
-        flow = client.flow_from_clientsecrets('.credentials.json', SCOPES)
+        flow = client.flow_from_clientsecrets(expanduser('~/.credentials.json'), SCOPES)
         creds = tools.run_flow(flow, store)
     service = build('gmail', 'v1', http=creds.authorize(Http()))
     results = service.users().messages().list(userId='me',labelIds = ['INBOX']).execute()
